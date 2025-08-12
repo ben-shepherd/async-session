@@ -1,9 +1,9 @@
-import SessionService from "@/session/SessionService";
+import AsyncSessionService from "@/session/AsyncSessionService";
 import { describe, expect, test } from "@jest/globals";
 
 describe("SessionService", () => {
   test("should create a new session with unique ID", async () => {
-    const sessionService = new SessionService();
+    const sessionService = new AsyncSessionService();
     await sessionService.start();
     const session = sessionService.createSession();
 
@@ -14,14 +14,14 @@ describe("SessionService", () => {
   });
 
   test("should throw error when getting session without creating one", () => {
-    const sessionService = new SessionService();
+    const sessionService = new AsyncSessionService();
     expect(() => {
       sessionService.getSession();
     }).toThrow("No session found in current context");
   });
 
   test("should get session after creating one", async () => {
-    const sessionService = new SessionService();
+    const sessionService = new AsyncSessionService();
     await sessionService.runWithSession(async () => {
       const retrievedSession = sessionService.getSession();
 
@@ -32,7 +32,7 @@ describe("SessionService", () => {
   });
 
   test("should get session ID", async () => {
-    const sessionService = new SessionService();
+    const sessionService = new AsyncSessionService();
     await sessionService.runWithSession(async () => {
       const sessionId = sessionService.getSessionId();
 
@@ -42,7 +42,7 @@ describe("SessionService", () => {
   });
 
   test("should get and set session data", async () => {
-    const sessionService = new SessionService();
+    const sessionService = new AsyncSessionService();
     await sessionService.runWithSession(async () => {
       const testData = { user: "test", role: "admin" };
       sessionService.setSessionData(testData);
@@ -53,7 +53,7 @@ describe("SessionService", () => {
   });
 
   test("should update session data while preserving existing values", async () => {
-    const sessionService = new SessionService();
+    const sessionService = new AsyncSessionService();
     await sessionService.runWithSession(async () => {
       // Set initial data
       const initialData = { user: "test", role: "admin" };
@@ -74,7 +74,7 @@ describe("SessionService", () => {
   });
 
   test("should throw error when setting data without active session", async () => {
-    const sessionService = new SessionService();
+    const sessionService = new AsyncSessionService();
     const testData = { user: "test" };
 
     expect(() => {

@@ -1,10 +1,10 @@
 import { AsyncLocalStorage } from "async_hooks";
 import { v4 } from "uuid";
 import {
-  ISessionService,
-  TSessionData,
-  TSessionObject,
-} from "./ISessionService";
+  IAsyncSessionService,
+  TAsyncSessionData,
+  TAsyncSessionObject,
+} from "./IAsyncSessionService";
 
 const generateUuidV4 = (): string => v4();
 
@@ -14,8 +14,8 @@ const generateUuidV4 = (): string => v4();
  * allowing access to session data from any point in the async execution chain
  * without explicitly passing the session through each function.
  */
-class SessionService implements ISessionService {
-  private asyncLocalStorage = new AsyncLocalStorage<TSessionObject>();
+export class AsyncSessionService implements IAsyncSessionService {
+  private asyncLocalStorage = new AsyncLocalStorage<TAsyncSessionObject>();
 
   /**
    * Starts a new session with the given ID or creates a new one
@@ -42,7 +42,7 @@ class SessionService implements ISessionService {
    * @param data Optional initial session data
    * @returns New session object
    */
-  createSession<T extends TSessionData>(data?: T): TSessionObject<T> {
+  createSession<T extends TAsyncSessionData>(data?: T): TAsyncSessionObject<T> {
     return {
       id: generateUuidV4(),
       data: data || ({} as T),
@@ -55,7 +55,7 @@ class SessionService implements ISessionService {
    * @param data Optional initial session data
    * @returns Result of the callback execution
    */
-  async runWithSession<T extends TSessionData, R>(
+  async runWithSession<T extends TAsyncSessionData, R>(
     callback: () => Promise<R> | R,
     data?: T,
   ): Promise<R> {
@@ -68,12 +68,12 @@ class SessionService implements ISessionService {
    * @throws {Error} If no session exists in the current context
    * @returns The current session
    */
-  getSession<T extends TSessionData>(): TSessionObject<T> {
+  getSession<T extends TAsyncSessionData>(): TAsyncSessionObject<T> {
     const session = this.asyncLocalStorage.getStore();
     if (!session) {
       throw new Error("No session found in current context");
     }
-    return session as TSessionObject<T>;
+    return session as TAsyncSessionObject<T>;
   }
 
   /**
@@ -90,7 +90,7 @@ class SessionService implements ISessionService {
    * @throws {Error} If no session exists in the current context
    * @returns The session data store
    */
-  getSessionData<T extends TSessionData>(): T {
+  getSessionData<T extends TAsyncSessionData>(): T {
     return this.getSession<T>().data;
   }
 
@@ -98,7 +98,7 @@ class SessionService implements ISessionService {
    * Sets the data store of the current session.
    * @param data The new session data
    */
-  setSessionData<T extends TSessionData>(data: T): void {
+  setSessionData<T extends TAsyncSessionData>(data: T): void {
     const session = this.getSession();
     const updatedSession = { ...session, data };
     Object.assign(session, updatedSession);
@@ -108,11 +108,11 @@ class SessionService implements ISessionService {
    * Updates the data store of the current session with new data.
    * @param data The data to merge with existing session data
    */
-  updateSessionData<T extends TSessionData>(data: T): void {
+  updateSessionData<T extends TAsyncSessionData>(data: T): void {
     const session = this.getSession();
     const updatedSession = { ...session, data: { ...session.data, ...data } };
     Object.assign(session, updatedSession);
   }
 }
 
-export default SessionService;
+export default AsyncSessionService;

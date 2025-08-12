@@ -1,2 +1,2 @@
-export * from "./ISessionService";
-export * from "./SessionService";
+export * from "./AsyncSessionService";
+export * from "./IAsyncSessionService";

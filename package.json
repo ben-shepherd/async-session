@@ -1,10 +1,10 @@
 {
-  "name": "ben-shepherd/larascript-async-session",
+  "name": "@ben-shepherd/async-session",
   "version": "1.0.0",
   "description": "Async session management utilities.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ben-shepherd/larascript-async-session"
+    "url": "git+https://github.com/ben-shepherd/async-session"
   },
   "license": "ISC",
   "author": "ben.shepherd@gmx.com",

@@ -17,21 +17,17 @@ npm install ben-shepherd/async-session
 ## Quick Start
 
 ```typescript
-import SessionService from '@ben-shepherd/async-session';
-
-const sessionService = new SessionService();
-
-// Run code within a session context
-await sessionService.runWithSession(async () => {
-  // Set session data
-  sessionService.setSessionData({ userId: '123', role: 'admin' });
+  import AsyncSessionService from '@ben-shepherd/async-session';
   
-  // Access session data from anywhere in the async chain
-  const sessionData = sessionService.getSessionData();
-  console.log(sessionData.userId); // '123'
+  const session = new AsyncSessionService();
   
-  return 'operation completed';
-});
+  await session.run({ userId: '123', role: 'admin' }, async () => {
+    console.log(session.get('userId')); // '123'
+    console.log(session.get('role'));   // 'admin'
+  
+    // Any async call here still has access to the same session data
+    await someAsyncTask();
+  });
 ```
 
 ## API
